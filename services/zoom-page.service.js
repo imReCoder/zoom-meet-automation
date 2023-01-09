@@ -17,7 +17,10 @@ const CHAT_ITEM_MESSAGE = ".chat-message__text-box"
 
 const IS_DEBUG = true;
 const launchBrowser = async () => {
+  const executablePath = await chromium.executablePath
+
   Browser = await chrome.puppeteer.launch({
+    executablePath,
       args: chrome.args,
       headless: chrome.headless,
     });
