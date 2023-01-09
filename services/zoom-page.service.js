@@ -1,5 +1,7 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const { config } = require('../config/config');
+const chrome = require('chrome-aws-lambda');
+
 let Browser;
 const LAUNCH_BUTTON = '#zoom-ui-frame > div.bhauZU7H > div > div.ifP196ZE.x2RD4pnS > div'; 
 const JOIN_FROM_BROWSER ="#zoom-ui-frame > div.bhauZU7H > div > div.pUmU_FLW > h3:nth-child(2) > span > a";
@@ -16,10 +18,10 @@ const CHAT_ITEM_MESSAGE = ".chat-message__text-box"
 const IS_DEBUG = true;
 const launchBrowser = async () => {
     Browser = await puppeteer.launch({
-      headless: config.headless,
-        timeout:30000
+      executablePath: await chrome.executablePath,
+      args: chrome.args,
+      headless: chrome.headless,
     });
-    Browser.on()
     return Browser;
 }
 
