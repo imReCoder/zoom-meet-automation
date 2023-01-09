@@ -1,4 +1,4 @@
-exports.responseHandler = (res, body) => {
+const responseHandler = (res, body) => {
     const payload = {
         payload:body,
         status:1
@@ -7,7 +7,7 @@ exports.responseHandler = (res, body) => {
 }
 
 
-exports.applyRoutes = (router, routes) => {
+const applyRoutes = (router, routes) => {
     routes.forEach((route)=>{
         switch(route.method){
             case 'GET':
@@ -25,3 +25,7 @@ exports.applyRoutes = (router, routes) => {
     return router;
 }
 
+module.exports = {
+    responseHandler,
+    applyRoutes
+}

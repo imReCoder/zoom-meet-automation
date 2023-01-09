@@ -3,7 +3,7 @@ const zoomPages = [];
 
 
 
-exports.joinZoomMeeting = (userInfo, url) => {
+const joinZoomMeeting = (userInfo, url) => {
     try {
         const page = new ZoomPage(userInfo, url + "#success");
     }
@@ -12,3 +12,4 @@ exports.joinZoomMeeting = (userInfo, url) => {
     }
 }
 
+module.exports = { joinZoomMeeting }

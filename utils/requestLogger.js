@@ -11,7 +11,7 @@ const bgGreen = chalk.bgGreenBright;
 const bgYellow = chalk.bgYellow;
 
 
-exports.requestLogger = (req, res, next) => {
+const requestLogger = (req, res, next) => {
     log(green(`${req.method} ${req.originalUrl}`));
     const start = new Date().getTime();
     res.on("finish", () => {
@@ -37,3 +37,5 @@ const reqConsoleLogger = (logValue) => {
         log(red(`${method} ${url} -> `) + bgRed(`${status}`) + cyan(` ${time}ms`));
     }
 };
+
+module.exports = { requestLogger }
