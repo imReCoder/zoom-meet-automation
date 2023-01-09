@@ -4,7 +4,7 @@ import * as userController from './controllers/user.controller.js';
 const routes = [
     {
         method:"GET",
-        path:"/check",
+        path: "/",
         handlers:[userController.getUser]
     }
 ]
