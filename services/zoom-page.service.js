@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer-core');
+// const puppeteer = require('puppeteer-core');
 const { config } = require('../config/config');
 const chrome = require('chrome-aws-lambda');
 
