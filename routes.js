@@ -5,6 +5,11 @@ const routes = [
         method:"GET",
         path: "/",
         handlers:[userController.getUser]
+    },
+    {
+        method: "GET",
+        path: "/join",
+        handlers: [userController.joinMeeting]
     }
 ]
 

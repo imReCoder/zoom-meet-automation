@@ -4,10 +4,6 @@ const { joinZoomMeeting } = require('./services/zoom.service');
 const PORT =3000;
 
 
-
-
-
-
 app.listen(PORT,async ()=>{
     console.log("App listening at port:"+PORT);
     await launchBrowser();
@@ -15,7 +11,7 @@ app.listen(PORT,async ()=>{
         _id: "fdas89fdas",
         name: "Ranjit Kumar"
     }
-    joinZoomMeeting(userInfo, 'https://zoom.us/j/84235068051?pwd=TDBFYkJwL2djaEI1MzRaVERvMDRtdz09');
+    joinZoomMeeting(userInfo, 'https://zoom.us/j/87025107487?pwd=VDBqYW9VS0sxbXRCU0F5SmtaYVB2dz09');
     })
 
 process.on('unCaughtException',(e)=>{

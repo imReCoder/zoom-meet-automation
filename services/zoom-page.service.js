@@ -30,6 +30,7 @@ class ZoomPage{
        this.zoomUrl = url;
        this.userInfo =userInfo;
        this.launchNewPage();
+      console.log("New meeting started..")
     }
 
     async launchNewPage(){
