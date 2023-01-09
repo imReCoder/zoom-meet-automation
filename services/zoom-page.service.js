@@ -14,7 +14,7 @@ const CHAT_ITEM_MESSAGE = ".chat-message__text-box"
 
 
 const IS_DEBUG = true;
-exports.launchBrowser = async () => {
+const launchBrowser = async () => {
     Browser = await puppeteer.launch({
       headless: config.headless,
         timeout:30000
@@ -108,4 +108,4 @@ class ZoomPage{
 
    
 }
-module.exports = { Browser, ZoomPage };
+module.exports = { Browser, ZoomPage, launchBrowser };
