@@ -1,7 +1,7 @@
-import express from 'express';
-import userRoutes from './routes.js';
-import { requestLogger } from './utils/requestLogger.js';
-import { applyRoutes } from './utils/utils.js';
+const express = require('express');
+const userRoutes = require('./routes');
+const { requestLogger } = require('./utils/requestLogger');
+const { applyRoutes } = require('./utils/utils');
 
 const app =  express();
 
@@ -10,4 +10,4 @@ const userRouter = express.Router();
 app.use(requestLogger);
 app.use("/",applyRoutes(userRouter,userRoutes))
 
-export {app};
+module.exports = { app };

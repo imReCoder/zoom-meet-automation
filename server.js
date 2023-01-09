@@ -1,6 +1,6 @@
-import {app} from './app.js'
-import { launchBrowser } from './services/zoom-page.service.js';
-import { joinZoomMeeting } from './services/zoom.service.js';
+const { app } = require('./app');
+const { launchBrowser } = require('./services/zoom-page.service');
+const { joinZoomMeeting } = require('./services/zoom.service');
 const PORT =3000;
 
 

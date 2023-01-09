@@ -1,9 +1,9 @@
-import {Browser,ZoomPage} from './zoom-page.service.js';
+const { Browser, ZoomPage } = require('./zoom-page.service');
 const zoomPages = [];
 
 
 
-export const joinZoomMeeting = (userInfo,url)=>{
+exports.joinZoomMeeting = (userInfo, url) => {
     try {
         const page = new ZoomPage(userInfo, url + "#success");
     }

@@ -1,6 +1,6 @@
-import { responseHandler } from "../utils/utils.js";
+const { responseHandler } = require("../utils/utils");
 
-export const getUser = async(req,res,next)=>{
+exports.getUser = async (req, res, next) => {
    const body = "success";
     responseHandler(res,body);
 }

@@ -1,17 +1,17 @@
-import * as chalk from "chalk";
-import { log } from "util";
+const chalk = require("chalk");
+const { log } = require("util");
 
 
-const red = chalk.default.redBright;
-const green = chalk.default.greenBright;
-const yellow = chalk.default.yellowBright;
-const cyan = chalk.default.cyanBright.bold;
-const bgRed = chalk.default.bgRedBright;
-const bgGreen = chalk.default.bgGreenBright;
-const bgYellow = chalk.default.bgYellow;
+const red = chalk.redBright;
+const green = chalk.greenBright;
+const yellow = chalk.yellowBright;
+const cyan = chalk.cyanBright.bold;
+const bgRed = chalk.bgRedBright;
+const bgGreen = chalk.bgGreenBright;
+const bgYellow = chalk.bgYellow;
 
 
-export const requestLogger = (req, res, next) => {
+exports.requestLogger = (req, res, next) => {
     log(green(`${req.method} ${req.originalUrl}`));
     const start = new Date().getTime();
     res.on("finish", () => {
