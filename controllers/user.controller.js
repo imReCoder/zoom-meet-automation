@@ -14,6 +14,6 @@ exports.joinMeeting = async (req, res, next) => {
         _id: "fdas89fdas",
         name: "Ranjit Kumar"
     }
-    await joinZoomMeeting(userInfo, 'https://zoom.us/j/87025107487?pwd=VDBqYW9VS0sxbXRCU0F5SmtaYVB2dz09');
+    await joinZoomMeeting(userInfo, 'https://zoom.us/j/85107504501?pwd=d0tNTHl2RmNMUHc0WDE5b3hyM0R0dz09');
     responseHandler(res, body);
 }
