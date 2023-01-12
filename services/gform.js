@@ -230,6 +230,7 @@ async function fillGForm(formLink, userInfo, submitForm) {
             // Form Submission
             if (submitForm) {
                 const submitButtonSpan = await page.$x(SUBMIT_BUTTON);
+                console.log("Submit Button: ", submitButtonSpan);
                 const submitButton = await submitButtonSpan[0].getProperty('parentNode');
                 console.log("Submitting Form ", submitButton);
                 await submitButton.click();
