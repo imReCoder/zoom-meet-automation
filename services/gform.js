@@ -56,7 +56,7 @@ const apiKey = "afa52684b7e822923d5ef9a84d6ad6e9";
 const launchBrowser = async () => {
     // const executablePath = await chrome.executablePath;
     let b = await puppeteer.launch({
-        headless: false,
+        headless: config.headless,
 
     });
 
