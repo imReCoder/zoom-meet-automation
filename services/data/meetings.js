@@ -73,7 +73,7 @@ const RANJIT = {
             schedules: [
                 {
                     day: "Thursday",
-                    startTime: "05:09 PM",
+                    startTime: "05:14 PM",
                     endTime: "04:45 PM"
                 }
             ]
