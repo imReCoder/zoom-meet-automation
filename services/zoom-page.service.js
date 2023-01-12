@@ -4,6 +4,7 @@ const { config } = require('../config/config');
 const puppeteer = require('puppeteer');
 const { sendMessage } = require('./wa');
 const { COMMON_ANSWERS } = require('./data/answers');
+const { fillGForm } = require('./gform');
 let Browser;
 const LAUNCH_BUTTON = '#zoom-ui-frame > div.bhauZU7H > div > div.ifP196ZE.x2RD4pnS > div'; 
 const JOIN_FROM_BROWSER ="#zoom-ui-frame > div.bhauZU7H > div > div.pUmU_FLW > h3:nth-child(2) > span > a";
@@ -15,9 +16,11 @@ const OPEN_CHAT ="#foot-bar > div.footer__btns-container > div:nth-child(3)";
 const CHAT_BOX = "#chat-list-content > div";
 const CHAT_ITEM = "#chat-item-container-";
 const CHAT_ITEM_MESSAGE = ".chat-message__text-box"
-
+const LEAVE_BUTTON = "button.footer__leave-btn"
+const CHAT_INPUT = "textarea.chat-box__chat-textarea"
 
 const IS_DEBUG = true;
+
 const launchBrowser = async () => {
   // const executablePath = await chrome.executablePath
 
@@ -25,24 +28,28 @@ const launchBrowser = async () => {
     // executablePath,
     // args: chrome.args,
     // headless: chrome.headless,
-    headless: true,
+    headless: false,
     });
     return Browser;
 }
 
 class ZoomPage{
      chatCount = 0;
-    
-    constructor(userInfo,url){
+  failedCount = 0;
+  maxFailure = 5;
+  monitorChat = true;
+  constructor(userInfo, url, meeting) {
        this.zoomUrl = url;
        this.userInfo =userInfo;
+    this.meeting = meeting;
        this.launchNewPage();
       console.log("New meeting started..")
     }
 
     async launchNewPage(){
+      try {
         console.log("Launching new page with url ",this.zoomUrl);
-      await sendMessage("Trying to join meeting " + new Date() + "\n" + this.zoomUrl, `+91${COMMON_ANSWERS.Phone}`);
+        await sendMessage("Trying to join meeting " + new Date() + "\n" + this.zoomUrl, `+91${this.userInfo.Phone}`);
         this.page = await Browser.newPage();
         
         const client = await this.page.target().createCDPSession();
@@ -71,36 +78,81 @@ class ZoomPage{
 
         await this.page.waitForSelector(NAME_INPUT);
         if(IS_DEBUG)console.log("Enter name input found..")
-        await this.page.$eval(NAME_INPUT, (el, value) => el.value = value, this.userInfo.name);
+        await this.page.$eval(NAME_INPUT, (el, value) => el.value = value, this.userInfo.En + "_" + this.userInfo.Name);
         await this.page.waitForSelector(JOIN_BUTTON);
         await this.delay(config.defaultDelay);
         await this.page.click(JOIN_BUTTON);
       await this.page.waitForNavigation();
       if (IS_DEBUG) console.log("Meeting join clicked success")
-      await this.delay(5000);
-      const content = await this.page.content();
-      // while (content.includes("meeting host will let you in soon")) {
-      //   console.log("Waiting for host to let you in...");
-      //   await this.delay(10000);
-      // }
+        await this.delay(5000);
+        const res = await openChatOrJoinFInal(this.page);
+        if (res && res.type == "chat") {
+          if (IS_DEBUG) console.log("Chat box found..");
+          await this.page.click(OPEN_CHAT);
+          if (IS_DEBUG) console.log("Chatbox clicked..");
 
-          await this.page.waitForSelector(FINAL_JOIN);
+        } else {
           if(IS_DEBUG)console.log("Final Join  button found..")
           await this.page.click(FINAL_JOIN);
-          await this.page.waitForSelector(OPEN_CHAT);
-          await this.delay(config.defaultDelay);
-          await this.page.click(OPEN_CHAT);
+        }
 
-          if(IS_DEBUG)console.log("Chatbox clicked..");
+        await this.delay(config.defaultDelay);
+
+
+        // await waitForElement(this.page, FINAL_JOIN, "Final Join");
+        // await waitForElement(this.page, OPEN_CHAT, "Open Chat");
+
         //   await this.page.waitForSelector(CHAT_BOX,{visible:true});
-          if(IS_DEBUG)console.log("Chat box found..");
-          this.monitor(CHAT_ITEM, async el => {
-            let element = await this.page.$(CHAT_ITEM+this.chatCount+" "+CHAT_ITEM_MESSAGE);
+        const LeaveBtn = await this.page.$(LEAVE_BUTTON);
 
+          this.monitor(CHAT_ITEM, async el => {
+            let element = await this.page.$(CHAT_ITEM + this.chatCount + " " + CHAT_ITEM_MESSAGE);
             this.chatCount++;
-            let chat = await this.page.evaluate(el => el?.textContent, element)
+            let chat = await this.page.evaluate(el => el?.textContent, element);
             console.log("New chat ",chat);
+
+            if (chat && (chat.includes("docs.google.com") || chat.includes("forms.gle"))) {
+              console.log("Google Doc link found in chat ", chat);
+              await sendMessage(this.meeting.name + "==> Google Doc link found in chat :" + new Date() + "\n" + chat, `+91${this.userInfo.Phone}`);
+              const result = await fillGForm(chat.trim(), this.userInfo, true);
+              // send result to user
+              await sendMessage(JSON.stringify(result, null, 2), `+91${this.userInfo.Phone}`);
+              if (result.score) {
+                console.log("Gform filled, score ", result.score);
+                if (this.meeting.sendScore) {
+                  const chatInputBox = await this.page.$(CHAT_INPUT);
+                  if (chatInputBox) {
+                    if (IS_DEBUG) console.log("Chat input box found..");
+                    let score = result.score.charAt(0);
+                    await chatInputBox.click();
+                    if (parseInt(score) == 0) {
+                      score = "1";
+                    }
+                    await chatInputBox.type(score);
+                    await this.page.keyboard.press('Enter');
+                    await this.delay(3000);
+                  }
+                }
+              }
+              if (LeaveBtn) {
+                await LeaveBtn.click();
+                await this.delay(5000);
+              }
+              await this.page.close();
+              this.monitorChat = false;
+            }
           })
+      } catch (e) {
+        console.log("Error in launch new page ", e);
+        this.failedCount++;
+        if (this.failedCount < this.maxFailure) {
+          // wait for 2 min
+          await this.delay(120000);
+          await this.launchNewPage();
+        } else {
+          await sendMessage(this.meeting.name + ":: Failed to join meeting " + new Date() + "\n" + this.zoomUrl + "\n" + e.message, `+91${this.userInfo.Phone}`);
+        }
+      }
     }
 
     async  monitor(selector, callback) {
@@ -113,8 +165,10 @@ class ZoomPage{
         /* add some delay */
         await this.delay(config.chatReadDelay);
         /* call recursively */
-        this.monitor (selector, callback);
+      if (this.monitorChat) {
+        this.monitor(selector, callback);
       }
+    }
 
       async delay(ms){
         console.log(ms+" delay..")
@@ -122,5 +176,36 @@ class ZoomPage{
       }
 
    
+}
+
+const openChatOrJoinFInal = async (page) => {
+  return new Promise((resolve, reject) => {
+    const interval = setInterval(async () => {
+      console.log("Waiting for chat or final join");
+      const chat = await page.$(OPEN_CHAT);
+      const finalJoin = await page.$(FINAL_JOIN);
+      if (chat || finalJoin) {
+        clearInterval(interval);
+        if (chat) {
+          resolve({ type: "chat" })
+        } else if (finalJoin) {
+          resolve({ type: "finalJoin" })
+        }
+      }
+    }, 10000)
+  })
+}
+
+async function waitForElement(page, selector, desc) {
+  return new Promise((resolve, reject) => {
+    // keep checking for the element until it is found
+    const interval = setInterval(async () => {
+      console.log("Waiting for ", desc);
+      if (await page.$(selector)) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 10000)
+  })
 }
 module.exports = { Browser, ZoomPage, launchBrowser };

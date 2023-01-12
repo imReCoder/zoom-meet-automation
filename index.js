@@ -1,25 +1,20 @@
 const { app } = require('./app');
-const { COMMON_ANSWERS } = require('./services/data/answers');
+const { RANJIT } = require('./services/data/meetings');
 const { fillGForm } = require('./services/gform');
 const { sendMessage } = require('./services/wa');
 const { launchBrowser } = require('./services/zoom-page.service');
-const { joinZoomMeeting } = require('./services/zoom.service');
 const PORT =3000;
 
 
 app.listen(PORT,async ()=>{
     console.log("App listening at port:"+PORT);
-    const formLink = 'https://docs.google.com/forms/d/e/1FAIpQLScYAjRHvC-Vpk7PZ024S5bwsYvKQQRPQWJAUBmM_mmaZi13tw/viewform';
-    // const formLink = "https://docs.google.com/forms/d/e/1FAIpQLSf_HwDrQBivEirlRIgrteLsqpFpE_B-ldb8JTEdMOhxx48xmA/viewform"
-    // const result = await fillGForm(formLink, true);
+    // const formLink = 'https://docs.google.com/forms/d/e/1FAIpQLSdcQkWfXvsoCr8frtzyvEWCqVgNLlFnCN8hVgl7s120_5Yi6Q/viewform';
+    // // const formLink = "https://docs.google.com/forms/d/e/1FAIpQLSf_HwDrQBivEirlRIgrteLsqpFpE_B-ldb8JTEdMOhxx48xmA/viewform"
+    // const result = await fillGForm(formLink, RANJIT.INFO, false);
     // console.log("final result is ", result);
-    // await sendMessage(JSON.stringify(result, null, 2), `+91${COMMON_ANSWERS.Phone}`);
+    // await sendMessage(JSON.stringify(result, null, 2), `+91${RANJIT.INFO.Phone}`);
     await launchBrowser();
-    const userInfo = {
-        _id: "fdas89fdas",
-        name: "Shubham"
-    }
-    await joinZoomMeeting(userInfo, 'https://zoom.us/j/82155593720?pwd=clE4UkkwbTR3N2Q4NjhCZkhBc2ZxQT09');
+
 })
 
 process.on('unCaughtException', (e) => {

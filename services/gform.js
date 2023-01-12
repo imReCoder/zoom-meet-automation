@@ -77,7 +77,7 @@ const getInputType = async (inputContainer) => {
     }
 }
 
-async function fillGForm(formLink, submitForm) {
+async function fillGForm(formLink, userInfo, submitForm) {
     let B = Browser;
     return new Promise(async (resolve) => {
         if (!B) {
@@ -100,6 +100,10 @@ async function fillGForm(formLink, submitForm) {
             const title = await page.$eval("title", el => el.textContent);
             console.log("form opened");
             console.log("Form Title: " + title);
+            const r = await waitForFormToOpen(page);
+            if (!r) {
+                return resolve({ success: false, message: "Form not opened" });
+            }
             const inputContainers = await page.$$(INPUT_CONTAINERS);
             console.log("Input Containers: ", inputContainers);
 
@@ -117,7 +121,7 @@ async function fillGForm(formLink, submitForm) {
                         console.log("Input Question: ", inputQuestion);
                         await input.click();
                         await delay(config.inputDelay);
-                        const answer = await handleTextQuestion(inputQuestion);
+                        const answer = await handleTextQuestion(inputQuestion, userInfo);
                         console.log("Answer: ", answer);
                         await input.type(answer);
                         await delay(config.inputDelay);
@@ -142,7 +146,7 @@ async function fillGForm(formLink, submitForm) {
                             // match question answer with dropdown option
                             options.push(dropdownOptionText);
                         }
-                        const optionIndex = await handleOptionQuestion(inputQuestion, options);
+                        const optionIndex = await handleOptionQuestion(inputQuestion, options, userInfo);
                         console.log("Answer: ", options[optionIndex]);
                         const option = await inputContainer.$(`div[role=option][data-value="${options[optionIndex]}"]`);
                         console.log("Option: ", option);
@@ -167,7 +171,7 @@ async function fillGForm(formLink, submitForm) {
                             console.log("MCQ Option text: ", mcqOptionText)
                             options.push(mcqOptionText);
                         }
-                        const optionIndex = await handleOptionQuestion(inputQuestion, options);
+                        const optionIndex = await handleOptionQuestion(inputQuestion, options, userInfo);
                         console.log("Answer: ", options[optionIndex]);
                         const option = await inputContainer.$(`div[role=radio][data-value="${options[optionIndex]}"]`);
                         await option.click();
@@ -179,7 +183,7 @@ async function fillGForm(formLink, submitForm) {
                         console.log("Input Question: ", inputQuestion);
                         await input.click();
                         await delay(config.inputDelay);
-                        const answer = await handleTextQuestion(inputQuestion);
+                        const answer = await handleTextQuestion(inputQuestion, userInfo);
                         console.log("Answer: ", answer);
                         await input.type(answer);
                         await delay(config.inputDelay);
@@ -199,7 +203,7 @@ async function fillGForm(formLink, submitForm) {
                             console.log("Checkbox Option text: ", checkBoxOptionText)
                             options.push(checkBoxOptionText);
                         }
-                        const optionIndex = await handleOptionQuestion(inputQuestion, options);
+                        const optionIndex = await handleOptionQuestion(inputQuestion, options, userInfo);
                         console.log("Answer: ", options[optionIndex]);
                         const option = await inputContainer.$(`div[role=checkbox][data-answer-value="${options[optionIndex]}"]`);
                         await option.click();
@@ -277,6 +281,27 @@ async function fillGForm(formLink, submitForm) {
     })
 }
 
+const waitForFormToOpen = (page) => {
+    return new Promise((resolve, reject) => {
+        console.log("Waiting for form to open...");
+        const waitStartTime = Date.now();
+        const interval = setInterval(async () => {
+            // wait time 3 hour
+            const waitTime = 3 * 60 * 60 * 1000;
+            // check if wait is more then 1 hour
+            if (Date.now() - waitStartTime > waitTime) {
+                clearInterval(interval);
+                console.log("Form not opened max wait reached");
+                resolve(false);
+            }
+            const inputContainers = await page.$$(INPUT_CONTAINERS);
+            if (inputContainers.length > 0) {
+                clearInterval(interval);
+                resolve(true);
+            }
+        }, 1000);
+    })
+}
 
 async function scrollIntoView(page, el) {
     return await page.evaluate((element) => { element.scrollIntoView(); }, el);

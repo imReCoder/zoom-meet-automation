@@ -10,28 +10,28 @@ const COMMON_ANSWERS = {
 
 }
 
-const handleTextQuestion = (question) => {
+const handleTextQuestion = (question, userInfo) => {
     const questionText = question.toLowerCase();
     if (questionText.includes('name')) {
-        return COMMON_ANSWERS.Name;
+        return userInfo.Name;
     } else if (questionText.includes('email')) {
-        return COMMON_ANSWERS.Email;
-    } else if (questionText.includes('enrollment')) {
-        return COMMON_ANSWERS.En;
+        return userInfo.Email;
+    } else if (questionText.includes('enrollment') || questionText.includes('roll') || questionText.includes('enroll')) {
+        return userInfo.En;
     } else if (questionText.includes('phone')) {
-        return COMMON_ANSWERS.Phone;
+        return userInfo.Phone;
     } else if (questionText.includes('email') && questionText.includes('private')) {
-        return COMMON_ANSWERS.EmailP;
+        return userInfo.EmailP;
     } else {
         return "...";
     }
 }
 
-const handleOptionQuestion = async (question, options) => {
+const handleOptionQuestion = async (question, options, userInfo) => {
     // handle common question
     if (question.includes('name')) {
         //    find option with name
-        const matchingOptionIndex = options.findIndex(option => option.toLowerCase().includes(COMMON_ANSWERS.Email));
+        const matchingOptionIndex = options.findIndex(option => option.toLowerCase().includes(userInfo.Name));
         if (matchingOptionIndex !== -1) {
             return matchingOptionIndex;
         } else {
@@ -39,28 +39,28 @@ const handleOptionQuestion = async (question, options) => {
             return Math.floor(Math.random() * options.length);
         }
     } else if (question.includes('email')) {
-        const matchingOptionIndex = options.findIndex(option => option.toLowerCase().includes(COMMON_ANSWERS.Email));
+        const matchingOptionIndex = options.findIndex(option => option.toLowerCase().includes(userInfo.Email));
         if (matchingOptionIndex !== -1) {
             return matchingOptionIndex;
         } else {
             return Math.floor(Math.random() * options.length);
         }
-    } else if (question.includes('enrollment')) {
-        const matchingOptionIndex = options.findIndex(option => option.toLowerCase().includes(COMMON_ANSWERS.En));
+    } else if (question.includes('enrollment') || question.includes('roll') || question.includes('enroll')) {
+        const matchingOptionIndex = options.findIndex(option => option.toLowerCase().includes(userInfo.En));
         if (matchingOptionIndex !== -1) {
             return matchingOptionIndex;
         } else {
             return Math.floor(Math.random() * options.length);
         }
     } else if (question.includes('phone')) {
-        const matchingOptionIndex = options.findIndex(option => option.toLowerCase().includes(COMMON_ANSWERS.Phone));
+        const matchingOptionIndex = options.findIndex(option => option.toLowerCase().includes(userInfo.Phone));
         if (matchingOptionIndex !== -1) {
             return matchingOptionIndex;
         } else {
             return Math.floor(Math.random() * options.length);
         }
     } else if (question.includes('email') && question.includes('private')) {
-        const matchingOptionIndex = options.findIndex(option => option.toLowerCase().includes(COMMON_ANSWERS.EmailP));
+        const matchingOptionIndex = options.findIndex(option => option.toLowerCase().includes(userInfo.EmailP));
         if (matchingOptionIndex !== -1) {
             return matchingOptionIndex;
         } else {
@@ -73,6 +73,5 @@ const handleOptionQuestion = async (question, options) => {
 
 module.exports = {
     handleOptionQuestion,
-    handleTextQuestion,
-    COMMON_ANSWERS
+    handleTextQuestion
 }
