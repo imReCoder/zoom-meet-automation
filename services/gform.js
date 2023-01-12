@@ -273,8 +273,7 @@ async function fillGForm(formLink, userInfo, submitForm) {
                 const submitButton = await submitButtonSpan[0].getProperty('parentNode');
                 console.log("Submitting Form ", submitButton);
                 await submitButton.click();
-                await page.waitForNavigation();
-                await delay(3000);
+                await delay(15000);
                 const submissionPage = await page.url();
                 console.log("submited url: ", submissionPage);
                 if (submissionPage.includes("formResponse")) {
@@ -320,6 +319,8 @@ async function fillGForm(formLink, userInfo, submitForm) {
 
     })
 }
+
+
 
 const waitForFormToOpen = (page) => {
     return new Promise((resolve, reject) => {
