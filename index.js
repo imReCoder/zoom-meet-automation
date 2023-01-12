@@ -14,6 +14,12 @@ app.listen(PORT,async ()=>{
     // const result = await fillGForm(formLink, true);
     // console.log("final result is ", result);
     // await sendMessage(JSON.stringify(result, null, 2), `+91${COMMON_ANSWERS.Phone}`);
+    await launchBrowser();
+    const userInfo = {
+        _id: "fdas89fdas",
+        name: "Shubham"
+    }
+    await joinZoomMeeting(userInfo, 'https://zoom.us/j/89246364864?pwd=NXE1M1hjelh5ZXZQdEhLak5VM1RhZz09');
 })
 
 process.on('unCaughtException', (e) => {
