@@ -5,6 +5,7 @@ const puppeteer = require('puppeteer');
 const { sendMessage } = require('./wa');
 const { COMMON_ANSWERS } = require('./data/answers');
 const { fillGForm } = require('./gform');
+const { delay } = require('../utils/utils');
 let Browser;
 const LAUNCH_BUTTON = '#zoom-ui-frame > div.bhauZU7H > div > div.ifP196ZE.x2RD4pnS > div'; 
 const JOIN_FROM_BROWSER ="#zoom-ui-frame > div.bhauZU7H > div > div.pUmU_FLW > h3:nth-child(2) > span > a";
@@ -20,6 +21,7 @@ const LEAVE_BUTTON = "button.footer__leave-btn"
 const CHAT_INPUT = "textarea.chat-box__chat-textarea"
 
 const IS_DEBUG = true;
+const NOT_STARTED = "//h4[contains(text(), 'The meeting has not started')]";
 
 const launchBrowser = async () => {
   // const executablePath = await chrome.executablePath
@@ -62,8 +64,8 @@ class ZoomPage{
             
         })
        
-        await this.page.goto(this.zoomUrl);
-     
+        await this.page.goto(this.zoomUrl, { waitUntil: 'networkidle2' });
+        await waitForMeetingToStart(this.page);
         if(IS_DEBUG)console.log("Navigation Completed...");
         //launch button class mbTuDeF1
         await this.page.waitForSelector(DOWNLOAD_ZOOM);
@@ -105,7 +107,7 @@ class ZoomPage{
 
         //   await this.page.waitForSelector(CHAT_BOX,{visible:true});
         const LeaveBtn = await this.page.$(LEAVE_BUTTON);
-
+        await sendMessage('Meeting joined successfully ' + new Date(), `+91${this.userInfo.Phone}`);
           this.monitor(CHAT_ITEM, async el => {
             let element = await this.page.$(CHAT_ITEM + this.chatCount + " " + CHAT_ITEM_MESSAGE);
             this.chatCount++;
@@ -208,5 +210,15 @@ async function waitForElement(page, selector, desc) {
       }
     }, 10000)
   })
+}
+
+const waitForMeetingToStart = async (page) => {
+  const meetingNotStarted = await page.$x(NOT_STARTED);
+  if (meetingNotStarted) {
+    console.log("Meeting not started yet..");
+    await delay(10000);
+    return await waitForMeetingToStart(page);
+  }
+  console.log("Meeting started..");
 }
 module.exports = { Browser, ZoomPage, launchBrowser };
