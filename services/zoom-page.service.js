@@ -1,7 +1,9 @@
 // const puppeteer = require('puppeteer-core');
 const { config } = require('../config/config');
-const chrome = require('chrome-aws-lambda');
-
+// const chrome = require('chrome-aws-lambda');
+const puppeteer = require('puppeteer');
+const { sendMessage } = require('./wa');
+const { COMMON_ANSWERS } = require('./data/answers');
 let Browser;
 const LAUNCH_BUTTON = '#zoom-ui-frame > div.bhauZU7H > div > div.ifP196ZE.x2RD4pnS > div'; 
 const JOIN_FROM_BROWSER ="#zoom-ui-frame > div.bhauZU7H > div > div.pUmU_FLW > h3:nth-child(2) > span > a";
@@ -17,12 +19,13 @@ const CHAT_ITEM_MESSAGE = ".chat-message__text-box"
 
 const IS_DEBUG = true;
 const launchBrowser = async () => {
-  const executablePath = await chrome.executablePath
+  // const executablePath = await chrome.executablePath
 
-  Browser = await chrome.puppeteer.launch({
-    executablePath,
-      args: chrome.args,
-      headless: chrome.headless,
+  Browser = await puppeteer.launch({
+    // executablePath,
+    // args: chrome.args,
+    // headless: chrome.headless,
+    headless: false,
     });
     return Browser;
 }
@@ -39,6 +42,7 @@ class ZoomPage{
 
     async launchNewPage(){
         console.log("Launching new page with url ",this.zoomUrl);
+      await sendMessage("Trying to join meeting " + new Date() + "\n" + this.zoomUrl, `+91${COMMON_ANSWERS.Phone}`);
         this.page = await Browser.newPage();
         
         const client = await this.page.target().createCDPSession();
@@ -71,8 +75,15 @@ class ZoomPage{
         await this.page.waitForSelector(JOIN_BUTTON);
         await this.delay(config.defaultDelay);
         await this.page.click(JOIN_BUTTON);
+      await this.page.waitForNavigation();
+      if (IS_DEBUG) console.log("Meeting join clicked success")
+      await this.delay(5000);
+      const content = await this.page.content();
+      while (content.includes("meeting host will let you in soon")) {
+        console.log("Waiting for host to let you in...");
+        await this.delay(10000);
+      }
 
-          console.log("Meeting join clicked success")
           await this.page.waitForSelector(FINAL_JOIN);
           if(IS_DEBUG)console.log("Final Join  button found..")
           await this.page.click(FINAL_JOIN);

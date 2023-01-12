@@ -3,6 +3,7 @@ exports.config = {
     viewPortHeight:700,
     chatReadDelay:2000,
     defaultDelay: 10000,
-    headless: true
+    headless: true,
+    inputDelay: 1000
 }
 

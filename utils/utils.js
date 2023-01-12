@@ -25,7 +25,12 @@ const applyRoutes = (router, routes) => {
     return router;
 }
 
+const delay = (ms) => {
+    return new Promise(_ => setTimeout(_, ms))
+}
+
 module.exports = {
     responseHandler,
-    applyRoutes
+    applyRoutes,
+    delay
 }
