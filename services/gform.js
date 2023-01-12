@@ -273,7 +273,7 @@ async function fillGForm(formLink, userInfo, submitForm) {
 
         } catch (error) {
 
-            console.error(error.message);
+            console.error(error);
             resolve({ error: error.message, success: false })
         }
 
