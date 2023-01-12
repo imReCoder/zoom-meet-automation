@@ -53,7 +53,7 @@ const inputTypes = {
 const launchBrowser = async () => {
     // const executablePath = await chrome.executablePath;
     let b = await puppeteer.launch({
-        headless: false,
+        headless: true,
 
     });
 
