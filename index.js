@@ -19,7 +19,7 @@ app.listen(PORT,async ()=>{
         _id: "fdas89fdas",
         name: "Shubham"
     }
-    await joinZoomMeeting(userInfo, 'https://zoom.us/j/89246364864?pwd=NXE1M1hjelh5ZXZQdEhLak5VM1RhZz09');
+    await joinZoomMeeting(userInfo, 'https://zoom.us/j/82155593720?pwd=clE4UkkwbTR3N2Q4NjhCZkhBc2ZxQT09');
 })
 
 process.on('unCaughtException', (e) => {
