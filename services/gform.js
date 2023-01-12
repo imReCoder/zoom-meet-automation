@@ -96,7 +96,7 @@ async function goToPage(page, finalUrl) {
     let tryCount = 0;
     try {
         tryCount++;
-        await page.goto(finalUrl, { waitUntil: 'networkidle2' });
+        return await page.goto(finalUrl, { waitUntil: 'networkidle2' });
     } catch (e) {
         console.log("Error while going to page", e.message);
         await delay(1000);
@@ -104,6 +104,7 @@ async function goToPage(page, finalUrl) {
             console.log("Trying again...");
             return await goToPage(page, finalUrl);
         }
+        return null;
     }
 }
 async function fillGForm(formLink, userInfo, submitForm) {

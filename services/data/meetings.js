@@ -69,11 +69,11 @@ const RANJIT = {
         {
             name: "Testing",
             sendScore: true,
-            zoomUrl: "https://zoom.us/j/87933423845?pwd=ak5ZR014T2hCZm9OY1JWWS9KMmFudz09",
+            zoomUrl: "https://zoom.us/j/88213789945?pwd=QXZwUllMMGltMzNOUHV3c2xaM00wdz09",
             schedules: [
                 {
                     day: "Thursday",
-                    startTime: "05:28 PM",
+                    startTime: "05:53 PM",
                     endTime: "04:45 PM"
                 }
             ]
