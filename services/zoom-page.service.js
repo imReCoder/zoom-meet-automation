@@ -79,10 +79,10 @@ class ZoomPage{
       if (IS_DEBUG) console.log("Meeting join clicked success")
       await this.delay(5000);
       const content = await this.page.content();
-      while (content.includes("meeting host will let you in soon")) {
-        console.log("Waiting for host to let you in...");
-        await this.delay(10000);
-      }
+      // while (content.includes("meeting host will let you in soon")) {
+      //   console.log("Waiting for host to let you in...");
+      //   await this.delay(10000);
+      // }
 
           await this.page.waitForSelector(FINAL_JOIN);
           if(IS_DEBUG)console.log("Final Join  button found..")
