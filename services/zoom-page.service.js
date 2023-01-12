@@ -25,7 +25,7 @@ const launchBrowser = async () => {
     // executablePath,
     // args: chrome.args,
     // headless: chrome.headless,
-    headless: false,
+    headless: true,
     });
     return Browser;
 }
