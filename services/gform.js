@@ -6,6 +6,7 @@ const puppeteer = require('puppeteer');
 const { config } = require("../config/config");
 const { delay } = require("../utils/utils");
 const { handleTextQuestion, handleOptionQuestion } = require("./data/answers");
+const { sendMessage } = require("./wa");
 
 const INPUT_CONTAINERS = ".Qr7Oae"
 const SUBMIT_BUTTON = "//span[contains(text(), 'Submit')]";
@@ -50,10 +51,12 @@ const inputTypes = {
     }
 }
 
+const apiKey = "afa52684b7e822923d5ef9a84d6ad6e9";
+
 const launchBrowser = async () => {
     // const executablePath = await chrome.executablePath;
     let b = await puppeteer.launch({
-        headless: true,
+        headless: false,
 
     });
 
@@ -76,8 +79,35 @@ const getInputType = async (inputContainer) => {
         return null;
     }
 }
+async function getFormLink(B, formLink) {
+    const page = await B.newPage();
+    await page.goto(formLink, { waitUntil: 'networkidle2' });
+    const url = await page.url();
+    await page.close();
+    return url;
+}
 
+function formProxyUrl(url) {
+    return `http://api.scraperapi.com?api_key=${apiKey}&url=${url}`;
+}
+
+async function goToPage(page, finalUrl) {
+    const MaxTry = 5;
+    let tryCount = 0;
+    try {
+        tryCount++;
+        await page.goto(finalUrl, { waitUntil: 'networkidle2' });
+    } catch (e) {
+        console.log("Error while going to page", e.message);
+        await delay(1000);
+        if (tryCount < MaxTry) {
+            console.log("Trying again...");
+            return await goToPage(page, finalUrl);
+        }
+    }
+}
 async function fillGForm(formLink, userInfo, submitForm) {
+
     let B = Browser;
     return new Promise(async (resolve) => {
         if (!B) {
@@ -87,7 +117,11 @@ async function fillGForm(formLink, userInfo, submitForm) {
 
 
         try {
-
+            if (formLink.includes("forms.gle")) {
+                formLink = await getFormLink(B, formLink);
+                console.log("New Form Link: ", formLink);
+            }
+            const finalUrl = formProxyUrl(formLink);
             const page = await B.newPage();
             console.log("Opening form link...");
             await page.setViewport({
@@ -96,7 +130,11 @@ async function fillGForm(formLink, userInfo, submitForm) {
 
             })
             // Opening Form
-            await page.goto(formLink, { waitUntil: 'networkidle2' });
+            // keep trying go to page until it opens
+            const success = await goToPage(page, finalUrl);
+            if (!success) {
+                await sendMessage("Error while opening form", `+91${userInfo.Phone}`);
+            }
             const title = await page.$eval("title", el => el.textContent);
             console.log("form opened");
             console.log("Form Title: " + title);
