@@ -95,7 +95,8 @@ class ZoomPage{
           if(IS_DEBUG)console.log("Final Join  button found..")
           await this.page.click(FINAL_JOIN);
         }
-
+        await this.page.click(OPEN_CHAT);
+        if (IS_DEBUG) console.log("Chatbox clicked..");
         await this.delay(config.defaultDelay);
 
 
