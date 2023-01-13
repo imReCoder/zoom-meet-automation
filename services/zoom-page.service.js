@@ -14,6 +14,7 @@ const NAME_INPUT = "#inputname"
 const JOIN_BUTTON="#joinBtn";
 const FINAL_JOIN="#root > div > div.preview > button";
 const OPEN_CHAT ="#foot-bar > div.footer__btns-container > div:nth-child(3)";
+const OPEN_CHAT_SPAN = "//span[contains(text(), 'Chat')]";
 const CHAT_BOX = "#chat-list-content > div";
 const CHAT_ITEM = "#chat-item-container-";
 const CHAT_ITEM_MESSAGE = ".chat-message__text-box"
@@ -69,23 +70,25 @@ class ZoomPage{
         if(IS_DEBUG)console.log("Navigation Completed...");
         await this.delay(5000);
         //launch button class mbTuDeF1
-        await this.page.waitForSelector(DOWNLOAD_ZOOM);
+        await waitForElement(this.page, DOWNLOAD_ZOOM, "Download  Button");
+        // await this.page.waitForSelector(DOWNLOAD_ZOOM);
         if(IS_DEBUG)console.log("Download button found...");
         
         await this.page.click(DOWNLOAD_ZOOM)
         if(IS_DEBUG)console.log("Download Button Clicked...");
+        await waitForElement(this.page, JOIN_FROM_BROWSER, "Browser Join Button");
 
-        await this.page.waitForSelector(JOIN_FROM_BROWSER);
         if(IS_DEBUG)console.log("Join from browser button found..")
         await this.page.click(JOIN_FROM_BROWSER);
-
-        await this.page.waitForSelector(NAME_INPUT);
+        if (IS_DEBUG) console.log("Join from browser button clicked..")
+        await waitForElement(this.page, NAME_INPUT, "Name Input");
+        // await this.page.waitForSelector(NAME_INPUT);
         if(IS_DEBUG)console.log("Enter name input found..")
         await this.page.$eval(NAME_INPUT, (el, value) => el.value = value, this.userInfo.En + "_" + this.userInfo.Name);
-        await this.page.waitForSelector(JOIN_BUTTON);
-        await this.delay(config.defaultDelay);
+        await waitForElement(this.page, JOIN_BUTTON, "Join Button");
+
         await this.page.click(JOIN_BUTTON);
-        console.log("Join button clicked..")
+        if (IS_DEBUG) console.log("Join button clicked..")
         // await this.page.waitForNavigation();
         await this.delay(15000);
         if (IS_DEBUG) console.log("Meeting join clicked success")
@@ -93,6 +96,7 @@ class ZoomPage{
         if (res && res.type == "chat") {
           await waitForElement(this.page, OPEN_CHAT, "Open Chat");
           if (IS_DEBUG) console.log("Chat box found..");
+          await this.delay(5000);
           await this.page.click(OPEN_CHAT);
           if (IS_DEBUG) console.log("Chatbox clicked..");
 
@@ -100,7 +104,9 @@ class ZoomPage{
           if(IS_DEBUG)console.log("Final Join  button found..")
           await this.page.click(FINAL_JOIN);
           await waitForElement(this.page, OPEN_CHAT, "Open Chat");
+          await this.delay(5000);
           await this.page.click(OPEN_CHAT);
+          await this.delay(5000);
           if (IS_DEBUG) console.log("Chatbox clicked..");
         }
 
@@ -109,7 +115,7 @@ class ZoomPage{
         // await waitForElement(this.page, OPEN_CHAT, "Open Chat");
 
         //   await this.page.waitForSelector(CHAT_BOX,{visible:true});
-        const LeaveBtn = await this.page.$(LEAVE_BUTTON);
+        this.LeaveBtn = await this.page.$(LEAVE_BUTTON);
         await sendMessage('Meeting joined successfully ' + new Date(), `+91${this.userInfo.Phone}`);
           this.monitor(CHAT_ITEM, async el => {
             let element = await this.page.$(CHAT_ITEM + this.chatCount + " " + CHAT_ITEM_MESSAGE);
@@ -140,8 +146,8 @@ class ZoomPage{
                   }
                 }
               }
-              if (LeaveBtn) {
-                await LeaveBtn.click();
+              if (this.LeaveBtn) {
+                await this.LeaveBtn.click();
                 await this.delay(5000);
               }
               await this.page.close();
@@ -153,7 +159,7 @@ class ZoomPage{
         this.failedCount++;
         if (this.failedCount < this.maxFailure) {
           // wait for 2 min
-          await this.delay(120000);
+          await this.delay(config.retryJoiningDelay);
           await this.launchNewPage();
         } else {
           await sendMessage(this.meeting.name + ":: Failed to join meeting " + new Date() + "\n" + this.zoomUrl + "\n" + e.message, `+91${this.userInfo.Phone}`);
@@ -181,7 +187,20 @@ class ZoomPage{
         return new Promise(_ => setTimeout(_, ms))
       }
 
-   
+  async endMeeting() {
+    try {
+
+      if (this.page) {
+        if (this.LeaveBtn) {
+          await this.LeaveBtn.click();
+          await this.delay(5000);
+        }
+        await this.page.close();
+      }
+    } catch (e) {
+      console.log("Error in end meeting ", e);
+    }
+  }
 }
 
 const openChatOrJoinFInal = async (page) => {

@@ -4,6 +4,7 @@ const { joinZoomMeeting } = require('../zoom.service');
 const cronJob = require('cron').CronJob;
 // const dayJs = require('dayjs');
 const moment = require('moment');
+const { config } = require('../../config/config');
 
 const RANJIT = {
     INFO: {
@@ -39,7 +40,7 @@ const RANJIT = {
                 },
                 {
                     day: "Friday",
-                    startTime: "03:29 PM",
+                    startTime: "02:45 PM",
                     endTime: "04:45 PM"
                 }
             ]
@@ -69,12 +70,13 @@ const RANJIT = {
         {
             name: "Testing",
             sendScore: true,
-            zoomUrl: "https://zoom.us/j/9751091159?pwd=U09udlJLWDlPSnM5SDhCdSsvVm5uUT09",
+            zoomUrl: "https://zoom.us/j/88462470049?pwd=ZFhtb2p2Z0tNa2ZpNlEvR3NrTVhyQT09",
             schedules: [
                 {
-                    day: "Thursday",
-                    startTime: "06:13 PM",
-                    endTime: "04:45 PM"
+                    day: "Friday",
+                    startTime: "04:55 PM",
+                    endTime: "04:45 PM",
+                    now: true
                 }
             ]
         }
@@ -94,12 +96,17 @@ const scheduleMeetings = (person) => {
             const schedule = schedules[j];
             const { day, startTime, endTime } = schedule;
             // convert AM PM to 24 hour format
-            const startTime24 = moment(startTime, ["h:mm A"]).format("HH:mm");
-            const [startHour, startMinute] = startTime24.split(":");
+            const startTime24 = moment(startTime, ["h:mm A"]).add(config.meetingJoinDelayInMinutes, 'minutes').format("HH:mm");
+            let [startHour, startMinute] = startTime24.split(":");
             const endTime24 = moment(endTime, ["h:mm A"]).format("HH:mm");
-
+            if (meeting.now) {
+                //    start hour and minute is after 1 minute
+                startHour = moment().add(1, 'minutes').format('HH');
+                startMinute = moment().add(1, 'minutes').format('mm');
+            }
             const cronTime = `${startMinute} ${startHour} * * ${dayToNumber(day)} `;
-            console.log("Meeting scheduled at: ", cronTime, " for meeting: ", meeting.name)
+            console.log("Meeting scheduled at: ", cronTime, " for meeting: ", meeting.name);
+
             const job = new cronJob(cronTime, () => {
                 console.log("Joining meeting: ", meeting);
                 joinZoomMeeting(info, meeting.zoomUrl, meeting);
