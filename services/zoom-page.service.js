@@ -85,11 +85,13 @@ class ZoomPage{
         await this.page.waitForSelector(JOIN_BUTTON);
         await this.delay(config.defaultDelay);
         await this.page.click(JOIN_BUTTON);
-      await this.page.waitForNavigation();
+        console.log("Join button clicked..")
+        await this.page.waitForNavigation();
       if (IS_DEBUG) console.log("Meeting join clicked success")
         await this.delay(5000);
         const res = await openChatOrJoinFInal(this.page);
         if (res && res.type == "chat") {
+          await waitForElement(this.page, OPEN_CHAT, "Open Chat");
           if (IS_DEBUG) console.log("Chat box found..");
           await this.page.click(OPEN_CHAT);
           if (IS_DEBUG) console.log("Chatbox clicked..");
