@@ -39,7 +39,7 @@ const RANJIT = {
                 },
                 {
                     day: "Friday",
-                    startTime: "03:25 PM",
+                    startTime: "03:29 PM",
                     endTime: "04:45 PM"
                 }
             ]
