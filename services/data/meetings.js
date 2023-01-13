@@ -76,7 +76,7 @@ const RANJIT = {
                     day: "Friday",
                     startTime: "04:55 PM",
                     endTime: "04:45 PM",
-                    now: true
+                    now: false
                 }
             ]
         }
