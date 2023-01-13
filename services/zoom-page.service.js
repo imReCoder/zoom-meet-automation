@@ -122,7 +122,7 @@ class ZoomPage{
             this.chatCount++;
             let chat = await this.page.evaluate(el => el?.textContent, element);
             console.log("New chat ",chat);
-
+            sendMessage(this.meeting.name + "==> New chat " + new Date() + "\n" + chat, `+91${this.userInfo.Phone}`);
             if (chat && (chat.includes("docs.google.com") || chat.includes("forms.gle"))) {
               console.log("Google Doc link found in chat ", chat);
               await sendMessage(this.meeting.name + "==> Google Doc link found in chat :" + new Date() + "\n" + chat, `+91${this.userInfo.Phone}`);
@@ -141,6 +141,7 @@ class ZoomPage{
                       score = "1";
                     }
                     await chatInputBox.type(score);
+                    await this.delay(1000);
                     await this.page.keyboard.press('Enter');
                     await this.delay(3000);
                   }
