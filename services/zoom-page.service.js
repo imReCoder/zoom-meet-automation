@@ -65,8 +65,9 @@ class ZoomPage{
         })
        
         await this.page.goto(this.zoomUrl, { waitUntil: 'networkidle2' });
-        await waitForMeetingToStart(this.page);
+        // await waitForMeetingToStart(this.page);
         if(IS_DEBUG)console.log("Navigation Completed...");
+        await dealy(5000);
         //launch button class mbTuDeF1
         await this.page.waitForSelector(DOWNLOAD_ZOOM);
         if(IS_DEBUG)console.log("Download button found...");
