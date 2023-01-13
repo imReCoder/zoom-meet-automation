@@ -3,9 +3,9 @@ exports.config = {
     viewPortHeight:700,
     chatReadDelay:2000,
     defaultDelay: 10000,
-    headless: false,
+    headless: true,
     inputDelay: 1000,
-    retryJoiningDelay: 10000,
+    retryJoiningDelay: 2 * 60 * 1000,
     meetingJoinDelayInMinutes: 10,
 }
 
