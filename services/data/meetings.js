@@ -99,7 +99,7 @@ const scheduleMeetings = (person) => {
             const startTime24 = moment(startTime, ["h:mm A"]).add(config.meetingJoinDelayInMinutes, 'minutes').format("HH:mm");
             let [startHour, startMinute] = startTime24.split(":");
             const endTime24 = moment(endTime, ["h:mm A"]).format("HH:mm");
-            if (meeting.now) {
+            if (schedule.now) {
                 //    start hour and minute is after 1 minute
                 startHour = moment().add(1, 'minutes').format('HH');
                 startMinute = moment().add(1, 'minutes').format('mm');
