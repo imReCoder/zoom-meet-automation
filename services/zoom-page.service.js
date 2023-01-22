@@ -24,6 +24,9 @@ const CHAT_INPUT = "textarea.chat-box__chat-textarea"
 const IS_DEBUG = true;
 const NOT_STARTED = "//h4[contains(text(), 'The meeting has not started')]";
 
+const MUTE_MIC = "button[aria-label='mute my microphone']";
+const STOP_VIDEO = "button[aria-label='start my video, button']";
+
 const launchBrowser = async () => {
   // const executablePath = await chrome.executablePath
 
@@ -32,6 +35,7 @@ const launchBrowser = async () => {
     // args: chrome.args,
     // headless: chrome.headless,
     headless: config.headless,
+    // args: ['--use-fake-ui-for-media-stream']
     });
     return Browser;
 }
@@ -84,7 +88,8 @@ class ZoomPage{
         await waitForElement(this.page, NAME_INPUT, "Name Input");
         // await this.page.waitForSelector(NAME_INPUT);
         if(IS_DEBUG)console.log("Enter name input found..")
-        await this.page.$eval(NAME_INPUT, (el, value) => el.value = value, this.userInfo.En + "_" + this.userInfo.Name);
+        await this.page.type(NAME_INPUT, this.userInfo.En + "_" + this.userInfo.Name);
+        // await this.page.$eval(NAME_INPUT, (el, value) => el.value = value, this.userInfo.En + "_" + this.userInfo.Name);
         await waitForElement(this.page, JOIN_BUTTON, "Join Button");
 
         await this.page.click(JOIN_BUTTON);
@@ -109,8 +114,7 @@ class ZoomPage{
           await this.delay(5000);
           if (IS_DEBUG) console.log("Chatbox clicked..");
         }
-
-
+        // await this.muteMic();
         // await waitForElement(this.page, FINAL_JOIN, "Final Join");
         // await waitForElement(this.page, OPEN_CHAT, "Open Chat");
 
@@ -157,6 +161,15 @@ class ZoomPage{
           })
       } catch (e) {
         console.log("Error in launch new page ", e);
+        // close page
+        if (this.page) {
+          try {
+            await this.page.close();
+          } catch (e) {
+
+          }
+        }
+
         this.failedCount++;
         if (this.failedCount < this.maxFailure) {
           // wait for 2 min
@@ -200,6 +213,27 @@ class ZoomPage{
       }
     } catch (e) {
       console.log("Error in end meeting ", e);
+    }
+  }
+
+  async muteMic() {
+    const MUTE_BUTTON = await this.page.$(MUTE_MIC);
+    if (MUTE_BUTTON) {
+      if (IS_DEBUG) console.log("Mute button found..");
+      await this.page.click(MUTE_MIC);
+      if (IS_DEBUG) console.log("Mute button clicked..")
+    }
+
+
+
+  }
+
+  async muteVideo() {
+    const STOP_VIDEO_BUTTON = await this.page.$(STOP_VIDEO);
+    if (STOP_VIDEO_BUTTON) {
+      if (IS_DEBUG) console.log("Stop video button found..");
+      await this.page.click(STOP_VIDEO);
+      if (IS_DEBUG) console.log("Stop video button clicked..")
     }
   }
 }
