@@ -17,7 +17,7 @@ const OPEN_CHAT ="#foot-bar > div.footer__btns-container > div:nth-child(3)";
 const OPEN_CHAT_SPAN = "//span[contains(text(), 'Chat')]";
 const CHAT_BOX = "#chat-list-content > div";
 const CHAT_ITEM = "#chat-item-container-";
-const CHAT_ITEM_MESSAGE = ".chat-message__text-box"
+const CHAT_ITEM_MESSAGE = ".new-chat-message__content"
 const LEAVE_BUTTON = "button.footer__leave-btn"
 const CHAT_INPUT = "textarea.chat-box__chat-textarea"
 
