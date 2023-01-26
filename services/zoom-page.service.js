@@ -101,7 +101,7 @@ class ZoomPage{
         if (res && res.type == "chat") {
           await waitForElement(this.page, OPEN_CHAT, "Open Chat");
           if (IS_DEBUG) console.log("Chat box found..");
-          await this.delay(5000);
+          await this.delay(1000);
           await this.page.click(OPEN_CHAT);
           if (IS_DEBUG) console.log("Chatbox clicked..");
 
@@ -109,7 +109,7 @@ class ZoomPage{
           if(IS_DEBUG)console.log("Final Join  button found..")
           await this.page.click(FINAL_JOIN);
           await waitForElement(this.page, OPEN_CHAT, "Open Chat");
-          await this.delay(5000);
+          await this.delay(10000);
           await this.page.click(OPEN_CHAT);
           await this.delay(5000);
           if (IS_DEBUG) console.log("Chatbox clicked..");
