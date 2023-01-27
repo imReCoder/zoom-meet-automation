@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer');
 const { sendMessage } = require('./wa');
 const { COMMON_ANSWERS } = require('./data/answers');
 const { fillGForm } = require('./gform');
-const { delay } = require('../utils/utils');
+const { delay, extractLink } = require('../utils/utils');
 let Browser;
 const LAUNCH_BUTTON = '#zoom-ui-frame > div.bhauZU7H > div > div.ifP196ZE.x2RD4pnS > div'; 
 const JOIN_FROM_BROWSER ="#zoom-ui-frame > div.bhauZU7H > div > div.pUmU_FLW > h3:nth-child(2) > span > a";
@@ -127,10 +127,12 @@ class ZoomPage{
             let chat = await this.page.evaluate(el => el?.textContent, element);
             console.log("New chat ",chat);
             sendMessage(this.meeting.name + "==> New chat " + new Date() + "\n" + chat, `+91${this.userInfo.Phone}`);
+            // extract link from chat
             if (chat && (chat.includes("docs.google.com") || chat.includes("forms.gle"))) {
-              console.log("Google Doc link found in chat ", chat);
-              await sendMessage(this.meeting.name + "==> Google Doc link found in chat :" + new Date() + "\n" + chat, `+91${this.userInfo.Phone}`);
-              const result = await fillGForm(chat.trim(), this.userInfo, true);
+              const gLink = await extractLink(chat);
+              console.log("Google Doc link found in chat ", gLink);
+              await sendMessage(this.meeting.name + "==> Google Doc link found in chat :" + new Date() + "\n" + chat + " |Link: " + gLink, `+91${this.userInfo.Phone}`);
+              const result = await fillGForm(gLink.trim(), this.userInfo, true);
               // send result to user
               await sendMessage(JSON.stringify(result, null, 2), `+91${this.userInfo.Phone}`);
               if (result.score) {

@@ -26,6 +26,8 @@ const sendMessage = async (message, to) => {
         console.log("Error occurred while sending message ", e);
     }
 }
+
+
 module.exports = {
     sendMessage
 }

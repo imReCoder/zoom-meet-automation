@@ -49,9 +49,16 @@ const dayToNumber = (day) => {
     }
 }
 
+const extractLink = (message) => {
+    // extract the https link from the message
+    const link = message.match(/https:\/\/[^\s]+/g);
+    return link;
+}
+
 module.exports = {
     responseHandler,
     applyRoutes,
     delay,
-    dayToNumber
+    dayToNumber,
+    extractLink
 }
