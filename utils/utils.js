@@ -50,9 +50,12 @@ const dayToNumber = (day) => {
 }
 
 const extractLink = (message) => {
-    // extract the https link from the message
-    const link = message.match(/https:\/\/[^\s]+/g);
-    return link;
+    if (!message) return null;
+    // extract https link from message
+    const regex = /(https?:\/\/[^\s]+)/g;
+    const link = message.match(regex);
+    return link[0];
+
 }
 
 module.exports = {
