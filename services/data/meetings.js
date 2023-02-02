@@ -7,20 +7,20 @@ const moment = require('moment');
 const { config } = require('../../config/config');
 
 const RANJIT = {
-    // INFO: {
-    //     Name: 'Ranjit Kumar Pandit',
-    //     Email: "190303105129@paruluniversity.ac.in",
-    //     En: "190303105129",
-    //     EmailP: "ranjitkumar448@yahoo.com",
-    //     Phone: "7984545163"
-    // },
     INFO: {
-        Name: '190303115291_Krunal Patel',
-        Email: "190303115291@paruluniversity.ac.in",
-        En: "190303115291",
-        EmailP: "krunalpatel489@yahoo.com",
-        Phone: "8989767890"
+        Name: 'Ranjit Kumar Pandit',
+        Email: "190303105129@paruluniversity.ac.in",
+        En: "190303105129",
+        EmailP: "ranjitkumar448@yahoo.com",
+        Phone: "7984545163"
     },
+    // INFO: {
+    //     Name: '190303115291_Krunal Patel',
+    //     Email: "190303115291@paruluniversity.ac.in",
+    //     En: "190303115291",
+    //     EmailP: "krunalpatel489@yahoo.com",
+    //     Phone: "8989767890"
+    // },
     MEETINGS: [
         {
             name: "Python",
